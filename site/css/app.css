@@ -1,0 +1,30 @@
+#app { max-width: 1200px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+[data-role="pattern-list"], [data-role="card-panel"] { min-width: 0; }
+[data-role="pattern-list"] section { margin-bottom: 24px; }
+[data-role="pattern-list"] h2 { color: var(--muted); margin-bottom: 8px; font-size: 1rem; }
+[data-role="pattern-list"] ul { list-style: none; padding: 0; margin: 0; }
+[data-pattern-id] { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 48px; border-radius: 8px; padding: 10px 12px; text-decoration: none; }
+[data-pattern-id]:hover, [data-pattern-id][aria-current="page"] { background: var(--accent-soft); }
+.video-badge { flex-shrink: 0; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; font-size: .75rem; line-height: 1.7; padding: 0 5px; }
+.pattern-card { padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.pattern-card h1 { margin-bottom: 4px; }
+.english-name, .aliases { color: var(--muted); }
+.pattern-card h2 { margin-top: 28px; margin-bottom: 12px; }
+.back-link { display: inline-block; margin-bottom: 16px; }
+.points { padding-left: 20px; }
+.points h3, .points p { margin-bottom: 4px; }
+.points li { margin-bottom: 16px; }
+.prompt { padding: 16px 0; border-top: 1px solid var(--border); }
+.prompt p { white-space: pre-wrap; user-select: text; -webkit-user-select: text; }
+.copy-status { margin-left: 8px; font-size: .9rem; }
+.empty-card { color: var(--muted); padding: 16px; }
+@media (min-width: 900px) {
+  #app { grid-template-columns: 260px minmax(0, 1fr); gap: 32px; align-items: start; }
+  .pattern-card { padding: 24px; }
+  .back-link { display: none; }
+}
+
+@media (width < 900px) {
+  #app[data-view="card"] [data-role="pattern-list"],
+  #app[data-view="list"] [data-role="card-panel"] { display: none; }
+}

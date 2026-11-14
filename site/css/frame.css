@@ -1,0 +1,12 @@
+.demo-host { margin: 24px 0; min-width: 0; }
+.demo-controls { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.switch-group { display: flex; flex-wrap: wrap; gap: 4px; }
+.demo-frame { width: 100%; padding: 8px; border: 1px solid var(--border); background: var(--bg); margin-inline: auto; overflow: hidden; }
+.frame-phone { max-width: 393px; border-radius: 24px; }
+.frame-pc { max-width: 738px; border-radius: 12px; }
+.frame-chrome { height: 28px; padding-inline: 8px; color: var(--muted); font-size: 12px; line-height: 28px; white-space: nowrap; overflow: hidden; }
+.frame-phone .frame-chrome { text-align: center; }
+[data-role="viewport"] { width: 100%; position: relative; overflow: hidden; overscroll-behavior: contain; touch-action: none; background: var(--surface); isolation: isolate; }
+.frame-phone [data-role="viewport"] { aspect-ratio: 375 / 667; border-radius: 0 0 16px 16px; }
+.frame-pc [data-role="viewport"] { aspect-ratio: 720 / 450; border-radius: 0 0 4px 4px; }
+.demo-placeholder { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; color: var(--muted); }
