@@ -1,6 +1,8 @@
 import { expect } from '@playwright/test';
 
 export async function openDemo(page, id, { quality = 'polished', frame } = {}) {
+  // 同じ URL への goto はハッシュが変わらず見本が作り直されないため、一度ページを離れる。
+  if (page.url() !== 'about:blank') await page.goto('about:blank');
   await page.goto(`/#/p/${id}`);
   const viewport = page.locator('[data-role="viewport"]');
   await expect(viewport.locator('[data-demo]')).toHaveCount(1);

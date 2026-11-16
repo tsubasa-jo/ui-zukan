@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { PATTERNS } from '../../site/js/data/patterns.js';
 
 const mounts = page => page.evaluate(() => window.__fixtureMounts ?? 0);
 const viewport = page => page.locator('[data-role="viewport"]');
@@ -97,7 +98,7 @@ test('テスト用見本は fixture=1 のときだけ一覧の末尾に出る', 
   await page.goto('/');
   await expect(page.locator('[data-pattern-id="_fixture"]')).toHaveCount(0);
   await page.goto('/?fixture=1#/');
-  await expect(page.locator('[data-pattern-id]')).toHaveCount(4);
+  await expect(page.locator('[data-pattern-id]')).toHaveCount(PATTERNS.length + 1);
   await expect(page.locator('[data-pattern-id]').last()).toHaveAttribute('data-pattern-id', '_fixture');
   await page.goto('/#/p/_fixture');
   await expect(page).toHaveURL(/#\/$/);

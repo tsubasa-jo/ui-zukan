@@ -1,17 +1,21 @@
 import { test, expect } from '@playwright/test';
+import { CATEGORIES } from '../../site/js/data/categories.js';
 import { PATTERNS } from '../../site/js/data/patterns.js';
 
 const detailed = PATTERNS.find(p => p.id === 'toast').prompts.detailed;
 
-test('一覧に3件が分類ごとに並ぶ', async ({ page }) => {
+test('収録した見本が分類ごとに並ぶ', async ({ page }) => {
   await page.goto('/#/');
-  await expect(page.locator('[data-pattern-id]')).toHaveCount(3);
+  await expect(page.locator('[data-pattern-id]')).toHaveCount(PATTERNS.length);
   await expect(page.getByRole('heading', { name: '待ち・お知らせ', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: '表示・重ねる', exact: true })).toBeVisible();
-  await expect(page.locator('[data-pattern-id]')).toContainText(['モーダル', 'トースト', 'プルトゥリフレッシュ']);
+  const ordered = CATEGORIES.flatMap(category => PATTERNS.filter(pattern => pattern.category === category.id));
+  await expect(page.locator('[data-pattern-id]')).toContainText(ordered.map(pattern => pattern.nameJa));
   for (const link of await page.locator('[data-pattern-id]').all()) {
     await expect(link).toHaveAttribute('href', `#/p/${await link.getAttribute('data-pattern-id')}`);
-    await expect(link).toContainText('動画');
+    const id = await link.getAttribute('data-pattern-id');
+    const pattern = PATTERNS.find(item => item.id === id);
+    await expect(link.locator('.video-badge')).toHaveCount(pattern.fromVideo ? 1 : 0);
   }
 });
 test('項目を押すとカードが開き、名前と頼み方が出る', async ({ page }) => {
@@ -29,7 +33,7 @@ test('項目を押すとカードが開き、名前と頼み方が出る', async
 test('存在しない id は一覧に戻る', async ({ page }) => {
   await page.goto('/#/p/nope');
   await expect(page).toHaveURL(/#\/$/);
-  await expect(page.locator('[data-pattern-id]')).toHaveCount(3);
+  await expect(page.locator('[data-pattern-id]')).toHaveCount(PATTERNS.length);
   await expect(page.locator('[data-copy]')).toHaveCount(0);
 });
 test('コピーすると「コピーしました」が出る', async ({ page, context }) => {
