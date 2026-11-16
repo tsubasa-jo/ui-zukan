@@ -1,6 +1,7 @@
 export const PATTERNS = [
   {
     id: 'toast',
+    confusedWith: ['snackbar', 'tooltip'],
     category: 'feedback',
     nameJa: 'トースト',
     nameEn: 'Toast',
@@ -27,6 +28,7 @@ export const PATTERNS = [
   },
   {
     id: 'modal',
+    confusedWith: ['confirm-dialog', 'bottom-sheet'],
     category: 'overlay',
     nameJa: 'モーダル',
     nameEn: 'Modal',
@@ -53,6 +55,7 @@ export const PATTERNS = [
   },
   {
     id: 'pull-to-refresh',
+    confusedWith: ['skeleton-screen', 'swipe-action'],
     category: 'feedback',
     nameJa: 'プルトゥリフレッシュ',
     nameEn: 'Pull to Refresh',

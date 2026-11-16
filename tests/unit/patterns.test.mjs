@@ -4,6 +4,14 @@ import { existsSync } from 'node:fs';
 import { CATEGORIES } from '../../site/js/data/categories.js';
 import { PATTERNS } from '../../site/js/data/patterns.js';
 
+// 全21件がそろったら削除する（Task 7）。
+const PLANNED_IDS = [
+  'hamburger-menu', 'breadcrumb', 'tabs', 'bottom-navigation',
+  'carousel', 'accordion', 'bottom-sheet', 'tooltip',
+  'radio-button', 'checkbox', 'toggle-switch', 'dropdown', 'autocomplete',
+  'skeleton-screen', 'snackbar', 'confirm-dialog', 'swipe-action', 'drag-reorder',
+];
+
 const nonempty = value => assert.ok(typeof value === 'string' && value.trim().length > 0);
 test('段階1の3件がある', () => {
   assert.deepEqual(PATTERNS.filter(p => p.phase === 1).map(p => p.id).sort(), ['modal', 'pull-to-refresh', 'toast']);
@@ -44,8 +52,19 @@ test('frames は phone / pc だけで、1件以上', () => {
 test('prompts の3つがすべて空でない', () => {
   for (const p of PATTERNS) for (const key of ['short', 'detailed', 'swiftui']) nonempty(p.prompts[key]);
 });
-test('phase 1 の見本ファイルがある', () => {
-  for (const p of PATTERNS.filter(p => p.phase === 1)) assert.ok(existsSync(new URL(`../../site/demos/${p.id}.js`, import.meta.url)));
+test('confusedWith は1〜3件で、存在する別の id を指す', () => {
+  const ids = new Set([...PATTERNS.map(p => p.id), ...PLANNED_IDS]);
+  for (const p of PATTERNS) {
+    assert.ok(Array.isArray(p.confusedWith), p.id);
+    assert.ok(p.confusedWith.length >= 1 && p.confusedWith.length <= 3, p.id);
+    for (const id of p.confusedWith) {
+      assert.notEqual(id, p.id);
+      assert.ok(ids.has(id), `${p.id}: ${id}`);
+    }
+  }
+});
+test('全件に見本ファイルがある', () => {
+  for (const p of PATTERNS) assert.ok(existsSync(new URL(`../../site/demos/${p.id}.js`, import.meta.url)));
 });
 test('分類の10件が決まった順である', () => {
   assert.deepEqual(CATEGORIES, [
@@ -73,5 +92,5 @@ test('段階1の指定された分類・枠・文面を保つ', () => {
   assert.ok(modal.badFor.some(item => item.case === '長い入力フォーム' && item.instead === '別ページにする'));
   assert.equal(pull.category, 'feedback');
   assert.deepEqual(pull.frames, ['phone']);
-  for (const p of PATTERNS) { assert.equal(p.fromVideo, true); assert.equal(p.phase, 1); }
+  for (const p of [toast, modal, pull]) { assert.equal(p.fromVideo, true); assert.equal(p.phase, 1); }
 });
