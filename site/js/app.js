@@ -1,6 +1,14 @@
 import { CATEGORIES } from './data/categories.js';
 import { PATTERNS } from './data/patterns.js';
-import { renderCard } from './card.js';
+import { renderCard, renderProgressMarks } from './card.js';
+import { createProgressStore } from './progress.js';
+
+const progress = createProgressStore();
+const progressIds = PATTERNS.map(pattern => pattern.id);
+const summary = document.createElement('p');
+summary.dataset.role = 'progress-summary';
+document.querySelector('.site-header').after(summary);
+const listMarks = new Map();
 
 // 本番のカードデータには、テスト用の見本を混ぜない。
 const fixture = new URLSearchParams(location.search).get('fixture') === '1' ? {
@@ -34,6 +42,10 @@ for (const category of categories) {
     link.href = `#/p/${pattern.id}`;
     link.dataset.patternId = pattern.id;
     link.append(document.createTextNode(pattern.nameJa));
+    const marks = document.createElement('span');
+    marks.className = 'progress-marks';
+    link.append(marks);
+    listMarks.set(pattern.id, marks);
     if (pattern.fromVideo) {
       const badge = document.createElement('span');
       badge.className = 'video-badge';
@@ -47,6 +59,14 @@ for (const category of categories) {
   list.append(group);
 }
 
+function updateProgress() {
+  const counts = progress.count(progressIds);
+  summary.textContent = `触った ${counts.touched} / ${PATTERNS.length} ・ 名前を言えた ${counts.named} / ${PATTERNS.length}`;
+  for (const [id, marks] of listMarks) renderProgressMarks(marks, progress.get(id));
+}
+progress.subscribe(updateProgress);
+updateProgress();
+
 function route() {
   currentCard?.destroy();
   currentCard = undefined;
@@ -58,7 +78,7 @@ function route() {
   }
   app.dataset.view = pattern ? 'card' : 'list';
   if (pattern) {
-    currentCard = renderCard(pattern, panel);
+    currentCard = renderCard(pattern, panel, progress);
   } else {
     if (location.hash !== '#/') history.replaceState(null, '', `${location.pathname}${location.search}#/`);
     const message = document.createElement('p');

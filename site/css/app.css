@@ -1,4 +1,12 @@
 #app { max-width: 1200px; margin: auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+[data-role="progress-summary"] { max-width: 1200px; margin: 0 auto 24px; color: var(--muted); }
+.progress-marks { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+[data-pattern-id] .progress-marks:empty { display: none; }
+/* 見本を最初に押した瞬間に印が出ても、見本の位置がずれないよう高さを先に取っておく。 */
+.pattern-card > .progress-marks { display: flex; height: 24px; margin-bottom: 16px; }
+[data-pattern-id] .progress-marks { margin-left: auto; flex-shrink: 0; }
+.progress-mark { box-sizing: border-box; height: 24px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; min-width: 24px; padding: 0 4px; border: 1px solid var(--accent); border-radius: 4px; color: var(--accent); background: var(--accent-soft); font-size: .75rem; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 [data-role="pattern-list"], [data-role="card-panel"] { min-width: 0; }
 [data-role="pattern-list"] section { margin-bottom: 24px; }
 [data-role="pattern-list"] h2 { color: var(--muted); margin-bottom: 8px; font-size: 1rem; }

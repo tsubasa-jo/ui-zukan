@@ -1,9 +1,10 @@
-export function createDemoHost(slot, pattern) {
+export function createDemoHost(slot, pattern, { controls: showControls = true, quality: initialQuality = 'polished', onInteract } = {}) {
   let frame = pattern.frames[0];
-  let quality = 'polished';
+  let quality = initialQuality;
   let mounted;
   let revision = 0;
   let destroyed = false;
+  let interacted = false;
   const events = new AbortController();
   const host = document.createElement('section');
   host.className = 'demo-host';
@@ -30,7 +31,7 @@ export function createDemoHost(slot, pattern) {
     controls.append(node);
     return node;
   }
-  if (pattern.frames.length > 1) {
+  if (showControls && pattern.frames.length > 1) {
     const frames = group('見本の枠');
     for (const value of pattern.frames) {
       switchButton(frames, value === 'phone' ? 'スマホ' : 'PC', 'frameSwitch', value, frameButtons, () => {
@@ -40,13 +41,15 @@ export function createDemoHost(slot, pattern) {
       });
     }
   }
-  const qualities = group('作りの丁寧さ');
-  for (const [value, label] of [['rough', '雑'], ['polished', '丁寧']]) {
-    switchButton(qualities, label, 'qualitySwitch', value, qualityButtons, () => {
-      if (quality === value) return;
-      quality = value;
-      refresh();
-    });
+  if (showControls) {
+    const qualities = group('作りの丁寧さ');
+    for (const [value, label] of [['rough', '雑'], ['polished', '丁寧']]) {
+      switchButton(qualities, label, 'qualitySwitch', value, qualityButtons, () => {
+        if (quality === value) return;
+        quality = value;
+        refresh();
+      });
+    }
   }
   const shell = document.createElement('div');
   const chrome = document.createElement('div');
@@ -54,14 +57,25 @@ export function createDemoHost(slot, pattern) {
   chrome.setAttribute('aria-hidden', 'true');
   const viewport = document.createElement('div');
   viewport.dataset.role = 'viewport';
+  function interact() {
+    if (!mounted || interacted || destroyed) return;
+    interacted = true;
+    onInteract?.();
+  }
+  // 子の見本が伝播を止める操作も、表示領域の中で受け取る。
+  for (const type of ['pointerdown', 'keydown']) {
+    viewport.addEventListener(type, interact, { capture: true, signal: events.signal });
+  }
   shell.append(chrome, viewport);
-  host.append(controls, shell);
+  if (showControls) host.append(controls);
+  host.append(shell);
   slot.replaceChildren(host);
 
   async function refresh() {
     const current = ++revision;
     mounted?.unmount();
     mounted = undefined;
+    interacted = false;
     viewport.replaceChildren();
     for (const button of frameButtons) button.setAttribute('aria-pressed', String(button.dataset.frameSwitch === frame));
     for (const button of qualityButtons) button.setAttribute('aria-pressed', String(button.dataset.qualitySwitch === quality));

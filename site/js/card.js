@@ -8,7 +8,20 @@ function element(tag, text, className) {
   return node;
 }
 
-export function renderCard(pattern, container) {
+export function renderProgressMarks(container, record) {
+  container.replaceChildren();
+  for (const [kind, symbol, label] of [['touched', '触', '触った'], ['named', '名', '名前を言えた']]) {
+    if (!record[kind]) continue;
+    const mark = element('span', '', 'progress-mark');
+    mark.dataset.mark = kind;
+    const visible = element('span', symbol);
+    visible.setAttribute('aria-hidden', 'true');
+    mark.append(visible, element('span', label, 'visually-hidden'));
+    container.append(mark);
+  }
+}
+
+export function renderCard(pattern, container, progress) {
   const events = new AbortController();
   const timers = new Set();
   let destroyed = false;
@@ -16,6 +29,11 @@ export function renderCard(pattern, container) {
   const back = element('a', '一覧へ戻る', 'back-link');
   back.href = '#/';
   article.append(back, element('h1', pattern.nameJa), element('p', pattern.nameEn, 'english-name'));
+  const marks = element('div', '', 'progress-marks');
+  article.append(marks);
+  const updateMarks = () => renderProgressMarks(marks, progress.get(pattern.id));
+  if (progress) updateMarks();
+  const unsubscribe = progress?.subscribe(updateMarks);
   if (pattern.aliases.length) article.append(element('p', `別名：${pattern.aliases.join('、')}`, 'aliases'));
   article.append(element('h2', 'ひとことで言うと'), element('p', pattern.summary));
   const slot = element('div');
@@ -61,11 +79,12 @@ export function renderCard(pattern, container) {
     article.append(section);
   }
   container.replaceChildren(article);
-  const demoHost = createDemoHost(slot, pattern);
+  const demoHost = createDemoHost(slot, pattern, { onInteract: () => progress?.mark(pattern.id, 'touched') });
   return {
     destroy() {
       destroyed = true;
       events.abort();
+      unsubscribe?.();
       demoHost.destroy();
       timers.forEach(clearTimeout);
       article.remove();
