@@ -102,3 +102,9 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 route();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(error => {
+    console.warn('通信なしで開く準備ができませんでした。', error);
+  });
+}
