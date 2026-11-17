@@ -8,6 +8,8 @@ test('丁寧：牛乳のつまみを2行ぶん下にドラッグすると、卵�
   test.skip(testInfo.project.name === 'iphone', 'マウスのドラッグはmacで検査する');
   const view = await openDemo(page, 'drag-reorder');
   const handle = view.getByRole('button', { name: '牛乳を並べ替える' });
+  // 画面の外にあると、マウスで押せない。
+  await handle.scrollIntoViewIfNeeded();
   const box = await handle.boundingBox();
   const row = await view.locator('[data-item]').first().boundingBox();
   const x = box.x + box.width / 2, y = box.y + box.height / 2;

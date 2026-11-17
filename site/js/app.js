@@ -2,6 +2,7 @@ import { CATEGORIES } from './data/categories.js';
 import { PATTERNS } from './data/patterns.js';
 import { renderCard, renderProgressMarks } from './card.js';
 import { createProgressStore } from './progress.js';
+import { renderQuiz } from './quiz-view.js';
 
 const progress = createProgressStore();
 const progressIds = PATTERNS.map(pattern => pattern.id);
@@ -28,6 +29,8 @@ const panel = document.createElement('div');
 panel.dataset.role = 'card-panel';
 app.append(list, panel);
 let currentCard;
+let currentQuiz;
+const screenLinks = document.querySelectorAll('[data-screen]');
 
 for (const category of categories) {
   const itemsInCategory = patterns.filter(pattern => pattern.category === category.id);
@@ -70,14 +73,24 @@ updateProgress();
 function route() {
   currentCard?.destroy();
   currentCard = undefined;
+  currentQuiz?.destroy();
+  currentQuiz = undefined;
+  const isQuiz = location.hash === '#/quiz';
+  for (const link of screenLinks) {
+    if ((link.dataset.screen === 'quiz') === isQuiz) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  }
   const match = /^#\/p\/([^/]+)$/.exec(location.hash);
   const pattern = match && patterns.find(item => item.id === match[1]);
   for (const link of list.querySelectorAll('[data-pattern-id]')) {
     if (link.dataset.patternId === pattern?.id) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   }
-  app.dataset.view = pattern ? 'card' : 'list';
-  if (pattern) {
+  app.dataset.view = isQuiz ? 'quiz' : pattern ? 'card' : 'list';
+  list.hidden = isQuiz;
+  if (isQuiz) {
+    currentQuiz = renderQuiz(panel, { patterns: PATTERNS, progress });
+  } else if (pattern) {
     currentCard = renderCard(pattern, panel, progress);
   } else {
     if (location.hash !== '#/') history.replaceState(null, '', `${location.pathname}${location.search}#/`);
