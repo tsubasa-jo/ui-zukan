@@ -8,7 +8,7 @@ import { PATTERNS } from '../../site/js/data/patterns.js';
 const PLANNED_IDS = [
   'hamburger-menu', 'breadcrumb', 'tabs', 'bottom-navigation',
   'carousel', 'accordion', 'bottom-sheet', 'tooltip',
-  'radio-button', 'checkbox', 'toggle-switch', 'dropdown', 'autocomplete',
+  'radio-button', 'checkbox', 'toggle-switch',
   'skeleton-screen', 'snackbar', 'confirm-dialog', 'swipe-action', 'drag-reorder',
 ];
 
