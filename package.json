@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:unit": "node --test tests/unit",
+    "test:unit": "node --test tests/unit/*.test.mjs",
     "test:e2e": "playwright test",
     "serve": "python3 -m http.server 8080 -d site",
     "precache": "node tools/make-precache.mjs",
