@@ -45,7 +45,7 @@
 |---|---|
 | 目的 | 見本を21個に増やし、名前当てクイズと覚えた印を加え、ホーム画面から通信なしで開けるようにして GitHub Pages で公開する |
 | 作業計画 | `docs/superpowers/plans/2026-11-16-ui-zukan-phase2.md` |
-| 現在の担当と状態 | Task 11 Step 1（pages.yml）完了・コミット済み（2026-11-17）。リポジトリ作成とプッシュはユーザーの了承待ち |
+| 現在の担当と状態 | Task 11 Step 3 まで完了（2026-11-18）。公開中：https://tsubasa-jo.github.io/ui-zukan/ 。次はユーザーの iPhone での確認（Step 4） |
 | 完成の条件 | 作業計画の Task 1〜10 のテストがすべて通る。Task 11 の実機確認でユーザーが問題なしと判断する |
 | 禁止事項 | UIZ-1 と同じ。加えて、見本の要素を `document.body` に足さない、見本の中で `location.hash` を変えない |
 | 承認済みの操作範囲 | UIZ-1 と同じ（`AI-training/` 内のファイルの作成・修正、テストの実行、テスト用のローカルサーバーの起動） |
@@ -97,6 +97,8 @@
 - 2026-11-17（Claude 確認）：Task 10。Codex のサンドボックスでは Chrome が起動できなかったため、`npm run icons` と `npm run precache` は Claude が実行した。Claude が2か所を直した。(1) pwa.spec の test.skip を、ファイルの直下でなく beforeEach の中に移した。ファイルの直下では testInfo を受け取れず、エラーで止まっていた。(2) アイコンが、薄い色の余白の中に角の丸い四角を描く形だった。iPhone はホーム画面でアイコンの角を自分で丸めるため、このままでは余白が枠のように見える。四角いっぱいに描くように変えた。`npm run test:unit` 30件成功（Codex が足した Service Worker の単体テスト4件を含む）、`npm run test:e2e` 529件成功・11件スキップ（pwa の iphone 分2件が増えた）。通信を切ったあと、まだ開いていない並べ替えのカードを開いて操作できることを、E2E で確かめた。ホーム画面への追加と、切り欠きの余白は実機でしか確かめられないので、Task 11 で見る。Task 10 完了。
 
 - 2026-11-17（Claude）：Task 11 Step 1。`.github/workflows/pages.yml` を書いた。npm ci ではブラウザーを取りに行かないようにし、単体テストのあとで site/ を Pages に出す。公開前の点検として、管理下の全ファイルに個人のメールアドレスやホームフォルダの名前が入っていないこと、コミットの作者のアドレスが GitHub の noreply であること、.env などがないことを確かめた。
+
+- 2026-11-18（Claude）：ユーザーの了承（「ui-zukanで公開」）を得て、公開リポジトリ tsubasa-jo/ui-zukan を作ってプッシュし、Pages の公開元を GitHub Actions にした。1回目の Actions は単体テストで失敗した。`node --test tests/unit` のフォルダ指定が CI の Node 22 では通らなかったため、`tests/unit/*.test.mjs` に直してプッシュし、2回目で公開できた。公開の URL を Chrome の iPhone 幅で開き、一覧21件、カルーセルの見本、クイズの選択肢4つ、Service Worker の登録を確かめた。コンソールに出た 404 は favicon.ico がないためで、動作には関係しない。Actions に Node 20 の非推奨の警告が出ているが、今は動く。
 
 ### 未解決事項
 
