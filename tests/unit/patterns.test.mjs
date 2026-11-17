@@ -9,7 +9,7 @@ const PLANNED_IDS = [
   'hamburger-menu', 'breadcrumb', 'tabs', 'bottom-navigation',
   'carousel', 'accordion', 'bottom-sheet', 'tooltip',
   'radio-button', 'checkbox', 'toggle-switch',
-  'skeleton-screen', 'snackbar', 'confirm-dialog', 'swipe-action', 'drag-reorder',
+  'swipe-action', 'drag-reorder',
 ];
 
 const nonempty = value => assert.ok(typeof value === 'string' && value.trim().length > 0);
