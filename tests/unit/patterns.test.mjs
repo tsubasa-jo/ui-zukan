@@ -4,14 +4,6 @@ import { existsSync } from 'node:fs';
 import { CATEGORIES } from '../../site/js/data/categories.js';
 import { PATTERNS } from '../../site/js/data/patterns.js';
 
-// 全21件がそろったら削除する（Task 7）。
-const PLANNED_IDS = [
-  'hamburger-menu', 'breadcrumb', 'tabs', 'bottom-navigation',
-  'carousel', 'accordion', 'bottom-sheet', 'tooltip',
-  'radio-button', 'checkbox', 'toggle-switch',
-  'swipe-action', 'drag-reorder',
-];
-
 const nonempty = value => assert.ok(typeof value === 'string' && value.trim().length > 0);
 test('段階1の3件がある', () => {
   assert.deepEqual(PATTERNS.filter(p => p.phase === 1).map(p => p.id).sort(), ['modal', 'pull-to-refresh', 'toast']);
@@ -53,7 +45,7 @@ test('prompts の3つがすべて空でない', () => {
   for (const p of PATTERNS) for (const key of ['short', 'detailed', 'swiftui']) nonempty(p.prompts[key]);
 });
 test('confusedWith は1〜3件で、存在する別の id を指す', () => {
-  const ids = new Set([...PATTERNS.map(p => p.id), ...PLANNED_IDS]);
+  const ids = new Set(PATTERNS.map(p => p.id));
   for (const p of PATTERNS) {
     assert.ok(Array.isArray(p.confusedWith), p.id);
     assert.ok(p.confusedWith.length >= 1 && p.confusedWith.length <= 3, p.id);
